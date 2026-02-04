@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phyo WaThone Win (B.Sc, ASCP, ACP, CRTO, CRTP...)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --accent-color: #64ffda;
+            --text-light: #e6f1ff;
+            --text-gray: #8892b0;
+            --cool-blue: #020c1b;
+            --terminal-green: #00ff00;
+            --hover-cyan: #00f7ff; /* အနီရောင်အစား Cyan အေးအေးလေး သုံးမယ် */
+        }
+
+        body {
+            background-color: var(--cool-blue);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow: hidden; 
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- LOADER --- */
+        #loader-wrapper {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--cool-blue);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 10000; transition: opacity 0.3s ease;
+        }
+        .loader-content { position: relative; width: 200px; height: 200px; display: flex; justify-content: center; align-items: center; }
+        .hacking-circle {
+            width: 100px; height: 100px; border: 2px solid transparent;
+            border-top-color: var(--terminal-green); border-bottom-color: var(--terminal-green);
+            border-radius: 50%; animation: spin 0.6s linear infinite;
+            box-shadow: 0 0 15px var(--terminal-green); z-index: 2;
+        }
+        .traffic-line-loader {
+            position: absolute; width: 60px; height: 1.5px;
+            background: linear-gradient(90deg, transparent, var(--terminal-green));
+            opacity: 0; animation: flowIn 0.5s linear infinite;
+        }
+        @keyframes flowIn {
+            0% { transform: translate(var(--startX), var(--startY)) rotate(var(--rot)) scaleX(0); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translate(0, 0) rotate(var(--rot)) scaleX(1); opacity: 0; }
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* --- CANVAS BACKGROUND --- */
+        #worldCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.3; }
+
+        .container {
+            max-width: 1200px; margin: 0 auto; padding: 0 20px; width: 100%; height: 100%;
+            position: relative; z-index: 1; display: flex; flex-direction: column; visibility: hidden;
+        }
+
+        header { padding: 2rem 0; border-bottom: 1px solid rgba(100, 255, 218, 0.1); flex-shrink: 0; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.8rem; font-weight: 700; color: var(--accent-color); cursor: pointer; text-decoration: none; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { color: var(--terminal-green); text-decoration: none; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; border: 1px solid transparent; padding: 5px 10px; cursor: pointer; }
+        .nav-links a:hover { background: rgba(0, 255, 0, 0.1); border: 1px solid var(--terminal-green); box-shadow: 0 0 10px var(--terminal-green); }
+
+        .section-view { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            text-align: center;
+            width: 100%;
+            overflow-y: auto;
+            padding: 20px 0;
+        }
+
+        .section-view::-webkit-scrollbar { display: none; }
+        .section-view { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .main-title { font-size: clamp(3rem, 10vw, 5rem); color: var(--terminal-green); text-shadow: 0 0 20px rgba(0, 255, 0, 0.5); margin-bottom: 1.5rem; flex-shrink: 0; }
+        .subtitle { font-size: clamp(1rem, 4vw, 1.2rem); color: var(--text-gray); max-width: 850px; padding: 2rem; border-left: 3px solid var(--terminal-green); background: rgba(2, 12, 27, 0.8); backdrop-filter: blur(8px); }
+
+        /* --- SKILLS SECTION --- */
+        #skills-section { display: none; width: 100%; max-width: 1100px; margin: 0 auto; overflow: hidden; }
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            width: 100%;
+            padding: 20px;
+        }
+        .skill-card {
+            background: rgba(2, 12, 27, 0.8);
+            border: 1px solid rgba(0, 255, 0, 0.2);
+            padding: 15px;
+            border-radius: 4px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .fly-right { transform: translateX(100vw); }
+        .fly-left { transform: translateX(-100vw); }
+        .skill-card.show { opacity: 1; transform: translateX(0); }
+        
+        /* Icon default style */
+        .skill-card i { 
+            color: var(--terminal-green); 
+            font-size: 1rem; 
+            text-shadow: 0 0 10px var(--terminal-green);
+            transition: all 0.3s ease; /* transition ထည့်ထားလို့ အရောင်ပြောင်းတာ smooth ဖြစ်မယ် */
+        }
+
+        /* Hover Effect for Card and Icon */
+        .skill-card:hover {
+            border-color: var(--terminal-green);
+            background: rgba(0, 255, 0, 0.15);
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 255, 0, 0.3);
+            z-index: 10;
+        }
+
+        /* Pointer ထောက်လိုက်ရင် i tag (ဒိုင်းလေး) ကို အနီရောင်ပြောင်းခိုင်းတာ */
+        .skill-card:hover i {
+            color: var(--alert-red);
+            text-shadow: 0 0 15px var(--hover-cyan);
+            transform: rotateY(180deg); /* Optional: လှည့်သွားတဲ့ effect လေးပါ ထည့်ပေးထားတယ် ပိုမိုက်အောင် */
+        }
+
+        /* --- EXPERIENCES SECTION --- */
+        #experience-section { 
+            display: none; 
+            width: 100%; 
+            overflow: hidden;
+            justify-content: center;
+            padding-top: 2vh;
+        }
+        
+        .experience-container {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            padding: 40px 0;
+        }
+
+        .experience-slider {
+            display: flex;
+            gap: 30px;
+            padding: 10px 20px;
+            width: max-content;
+            will-change: transform;
+        }
+        
+        .exp-card {
+            width: 380px;
+            height: 350px;
+            background: rgba(2, 12, 27, 0.95);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            padding: 30px;
+            border-radius: 12px;
+            text-align: left;
+            transition: 0.4s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            position: relative;
+            cursor: default;
+        }
+
+        .exp-card:hover {
+            border-color: var(--terminal-green);
+            transform: translateY(-5px);
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.1);
+        }
+
+        .exp-info-top { flex-grow: 1; }
+        .exp-date { color: var(--terminal-green); font-weight: bold; font-size: 0.8rem; margin-bottom: 8px; font-family: monospace; display: block; }
+        .exp-role { color: #fff; font-size: 1.4rem; font-weight: 700; margin-bottom: 5px; }
+        .exp-company { color: var(--accent-color); font-size: 1.1rem; font-weight: 600; display: block; }
+        .exp-location { color: var(--text-gray); font-size: 0.85rem; margin-bottom: 15px; font-style: italic; display: block; }
+        
+        .exp-desc-short { 
+            color: var(--text-light); 
+            font-size: 0.95rem; 
+            opacity: 0.8;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .click-details-btn {
+            background: transparent;
+            border: 1px solid var(--terminal-green);
+            color: var(--terminal-green);
+            padding: 8px 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 15px;
+            width: fit-content;
+            border-radius: 4px;
+        }
+
+        .click-details-btn:hover {
+            background: var(--terminal-green);
+            color: #000;
+        }
+
+        /* --- MODAL STYLES --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 12, 27, 0.9);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-box {
+            background: #0a192f;
+            border: 2px solid var(--terminal-green);
+            width: 90%;
+            max-width: 600px;
+            padding: 40px;
+            border-radius: 8px;
+            position: relative;
+            transform: scale(0.7);
+            transition: transform 0.4s cubic-bezier(0.17, 0.84, 0.44, 1);
+            box-shadow: 0 0 50px rgba(0, 255, 0, 0.2);
+        }
+
+        .modal-overlay.active .modal-box {
+            transform: scale(1);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px; right: 20px;
+            color: var(--terminal-green);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .modal-title { color: var(--terminal-green); font-size: 1.8rem; margin-bottom: 10px; }
+        .modal-subtitle { color: var(--accent-color); font-size: 1.2rem; margin-bottom: 20px; border-bottom: 1px solid rgba(100, 255, 218, 0.2); padding-bottom: 10px; }
+        .modal-list { list-style: none; text-align: left; }
+        .modal-list li { color: var(--text-gray); margin-bottom: 12px; position: relative; padding-left: 25px; line-height: 1.4; }
+        .modal-list li::before { content: '▹'; position: absolute; left: 0; color: var(--terminal-green); }
+
+        /* --- CONTACT SECTION --- */
+        #contact-section { display: none; width: 100%; max-width: 1100px; margin: 0 auto; }
+        .contact-wrapper { display: flex; align-items: center; justify-content: flex-start; position: relative; width: 100%; min-height: 500px; padding-left: 10px; }
+        .typing-container { font-size: 2.2rem; color: var(--terminal-green); font-weight: bold; width: auto; text-align: left; padding-right: 20px; text-shadow: 0 0 15px rgba(0, 255, 0, 0.4); white-space: nowrap; z-index: 5; position: relative; }
+        .typing-container::after { content: '|'; margin-left: 8px; animation: blink 0.8s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        .connection-svg { position: absolute; left: 420px; top: 50%; transform: translateY(-50%); width: 150px; height: 400px; pointer-events: none; z-index: 1; }
+        .tree-line { fill: none; stroke: var(--terminal-green); stroke-width: 3; opacity: 0; stroke-dasharray: 1000; stroke-dashoffset: 1000; transition: stroke-dashoffset 0.8s ease-in-out, opacity 0.3s; filter: drop-shadow(0 0 5px rgba(0, 255, 0, 0.6)); }
+        .show-line { stroke-dashoffset: 0; opacity: 0.6; }
+        .traffic-dot { fill: var(--terminal-green); filter: blur(0.5px) drop-shadow(0 0 8px var(--terminal-green)); opacity: 0; }
+        .active-traffic .traffic-dot { animation: moveData 3s linear infinite; }
+        @keyframes moveData { 0% { offset-distance: 0%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { offset-distance: 100%; opacity: 0; } }
+
+        .contact-nodes { display: flex; flex-direction: column; gap: 22px; padding-left: 208px; z-index: 2; perspective: 1000px; }
+        .node { background: rgba(2, 12, 27, 0.95); border: 2px solid var(--terminal-green); padding: 16px 26px; border-radius: 4px; width: 380px; display: flex; align-items: center; gap: 15px; color: var(--text-light); text-decoration: none; transition: all 0.4s; opacity: 0; transform: translateX(10px); }
+        .node:hover { background: rgba(0, 255, 0, 0.15); transform: scale(1.08) translateX(15px); border-color: #fff; z-index: 10; }
+        .node.show { opacity: 1; transform: translateX(0); }
+
+        footer { text-align: center; padding: 1rem 0; border-top: 1px solid rgba(0, 255, 0, 0.1); color: var(--text-gray); font-size: 0.8rem; flex-shrink: 0; }
+    </style>
+</head>
+<body>
+
+    <div id="loader-wrapper">
+        <div class="loader-content" id="loader-traffic">
+            <div class="hacking-circle"></div>
+        </div>
+    </div>
+
+    <canvas id="worldCanvas"></canvas>
+    
+    <div class="container" id="main-ui">
+        <header>
+            <div class="header-top">
+                <div class="logo" onclick="showSection('hero-section')">Phyo WaThone Win</div>
+                <nav class="nav-links">
+                    <a onclick="showSection('hero-section')">Home</a>
+                    <a onclick="showSection('skills-section')">Skills</a>
+                    <a onclick="showSection('experience-section')">Experiences</a>
+                    <a href="#">Certificates</a>
+                    <a onclick="showSection('contact-section')">Contact</a>
+                </nav>
+            </div>
+        </header>
+
+        <section id="hero-section" class="section-view">
+            <h1 class="main-title">Hello!</h1>
+            <p class="subtitle" id="typewriter-text"></p>
+        </section>
+
+        <section id="skills-section" class="section-view">
+            <div class="skills-grid" id="skills-container"></div>
+        </section>
+
+        <section id="experience-section" class="section-view">
+            <div class="experience-container">
+                <div class="experience-slider" id="auto-slider">
+                    </div>
+            </div>
+        </section>
+
+        <section id="contact-section" class="section-view">
+            <div class="contact-wrapper" id="traffic-container">
+                <div class="typing-container" id="contact-typing"></div>
+                <svg class="connection-svg" viewBox="0 0 150 400">
+                    <path class="tree-line" d="M0,200 L40,200 L40,45 L150,45" id="line1" />
+                    <path class="tree-line" d="M0,200 L40,200 L40,148 L150,148" id="line2" />
+                    <path class="tree-line" d="M0,200 L40,200 L40,252 L150,252" id="line3" />
+                    <path class="tree-line" d="M0,200 L40,200 L40,355 L150,355" id="line4" />
+                    <circle r="4" class="traffic-dot" style="offset-path: path('M0,200 L40,200 L40,45 L150,45'); animation-delay: 0s;"></circle>
+                    <circle r="4" class="traffic-dot" style="offset-path: path('M0,200 L40,200 L40,148 L150,148'); animation-delay: 0.5s;"></circle>
+                    <circle r="4" class="traffic-dot" style="offset-path: path('M0,200 L40,200 L40,252 L150,252'); animation-delay: 1.2s;"></circle>
+                    <circle r="4" class="traffic-dot" style="offset-path: path('M0,200 L40,200 L40,355 L150,355'); animation-delay: 0.8s;"></circle>
+                </svg>
+                <div class="contact-nodes">
+                    <a href="mailto:wathonewin.work@gmail.com" class="node" id="node1">
+                        <i class="fa-solid fa-envelope"></i> <span>wathonewin.work@gmail.com</span>
+                    </a>
+                    <a href="https://www.linkedin.com/in/phyowathonewin/" target="_blank" class="node" id="node2">
+                        <i class="fa-brands fa-linkedin-in"></i> <span>LinkedIn Profile</span>
+                    </a>
+                    <a href="tel:+9595102202" class="node" id="node3">
+                        <i class="fa-solid fa-phone"></i> <span>+95 95102202</span>
+                    </a>
+                    <a href="https://bugcrowd.com/h/phyowathonewin" target="_blank" class="node" id="node4">
+                        <i class="fa-solid fa-bug"></i> <span>Bugcrowd Profile</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <footer id="main-footer">
+            <p>© 2026 Red Team Consultant & Penetration Tester</p>
+        </footer>
+    </div>
+
+    <div class="modal-overlay" id="exp-modal">
+        <div class="modal-box">
+            <i class="fa-solid fa-xmark close-modal" onclick="closeExpModal()"></i>
+            <h2 id="modal-role" class="modal-title">Role</h2>
+            <h4 id="modal-company" class="modal-subtitle">Company</h4>
+            <ul id="modal-tasks" class="modal-list">
+                </ul>
+        </div>
+    </div>
+
+    <script>
+        const experiencesData = [
+            {
+                role: "Red Team Consultant",
+                company: "Hacktilizer Cybersecurity",
+                date: "Dec 2025 - Present",
+                location: "Yangon, Myanmar · Hybrid",
+                shortDesc: "Currently serving as a Red Team Consultant, performing advanced penetration testing and adversarial simulation.",
+                tasks: [
+                    "Red team engagements & adversarial simulation",
+                    "Advanced penetration testing methodologies",
+                    "Security consultancy and advisory services",
+                    "Scenario-based threat modeling",
+                    "Developing custom exploit payloads for internal assessments"
+                ]
+            },
+            {
+                role: "Security Specialist",
+                company: "AYA Bank",
+                date: "Aug 2023 - Mar 2024",
+                location: "Yangon, Myanmar · On-site",
+                shortDesc: "Performed comprehensive security assessments for banking systems and high-security applications.",
+                tasks: [
+                    "Vulnerability assessment across systems, networks, and applications",
+                    "Internal and external penetration testing",
+		            "Blackbox, Greybox, and Whitebox testing methodologies",
+		            "Exploit discovery and validation",
+		            "Security tool automation and optimization",
+		            "Detailed reporting with remediation recommendations",
+                    "Web application, API, and Android testing",
+                    "PCI-DSS compliance assessments",
+                    "Purple teaming exercises to enhance detection capabilities"
+                ]
+            },
+            {
+                role: "Security Analyst",
+                company: "ONOW Myanmar",
+                date: "Jul 2022 - Aug 2023",
+                location: "Yangon, Myanmar",
+                shortDesc: "Conducted security analysis and established organizational awareness programs.",
+                tasks: [
+                    "Security awareness & phishing simulations",
+                    "Cloud and web application penetration testing",
+                    "Security policy implementation & review",
+                    "Continuous attack and vulnerability monitoring"
+                ]
+            },
+            {
+                role: "Instructor",
+                company: "Lat Twae Space",
+                date: "Nov 2022 - May 2023",
+                location: "Myanmar · Part-time",
+                shortDesc: "Provided cybersecurity and Linux training to students and professionals.",
+                tasks: [
+                    "Cybersecurity training curriculum development",
+                    "Linux system administration training",
+                    "Hands-on lab sessions and practical exercises"
+                ]
+            },
+            {
+                role: "Lecturer & Pentester",
+                company: "M.S.T University",
+                date: "Jan 2020 - Jul 2022",
+                location: "Yangon, Myanmar · Hybrid",
+                shortDesc: "Combined teaching technical ITPEC certifications with practical hands-on penetration testing work.",
+                tasks: [
+                    "ITPEC certification training for cybersecurity students",
+                    "Software and hardware troubleshooting",
+		            "Network installation and configuration",
+		            "Penetration testing and security assessments",
+                    "CEH security theory and practical labs guidance",
+                    "Cisco device configuration & network security",
+                    "Microsoft Windows Server administration and hardening"
+                ]
+            },
+            {
+                role: "Freelance Penetration Tester",
+                company: "Self-Employed",
+                date: "Aug 2018 - Aug 2022",
+                location: "Remote",
+                shortDesc: "Conducted freelance penetration testing and security assessments for various clients.",
+                tasks: [
+                    "Client consultation and requirements gathering",
+                    "Vulnerability discovery and bug reporting",
+                    "Security assessment across diverse platforms"
+                ]
+            }
+        ];
+
+        const skillsList = [
+            "Website, Network, Mobile Penetration Testing",
+            "Thick Client Penetration Testing",
+            "Banking, Finance, & Crypto Platform AppSec",
+            "Active Directory Penetration Testing",
+            "Vulnerability Management (Tenable, Nessus, Rapid7)",
+            "Application Security (SAST, DAST)",
+            "Red Teaming Activities",
+            "Infra Security Assessment & Reporting",
+            "Manual Vulnerability Validation & Research",
+            "MITRE ATT&CK & OWASP Frameworks",
+            "Bug Bounty Hunting / Programs",
+            "Stakeholder Communication for Remediation",
+            "Blue Team Tools (Elastic, TrendMicro)",
+            "Compliance Familiarity (PCI-DSS)",
+            "Software & Hardware Troubleshooting"
+        ];
+
+        let animationFrameId;
+        let scrollPos = 0;
+        let isPaused = false;
+
+        function showSection(sectionId) {
+            const sections = ['hero-section', 'contact-section', 'skills-section', 'experience-section'];
+            const traffic = document.getElementById('traffic-container');
+
+            cancelAnimationFrame(animationFrameId);
+
+            sections.forEach(s => {
+                document.getElementById(s).style.display = 'none';
+            });
+            
+            const activeSection = document.getElementById(sectionId);
+            activeSection.style.display = 'flex';
+
+            if (sectionId === 'contact-section') {
+                setTimeout(triggerContactAnimation, 50);
+            } else if (sectionId === 'skills-section') {
+                renderSkills();
+            } else if (sectionId === 'experience-section') {
+                renderExperiences();
+                setupInfiniteScroll();
+            } else {
+                if(traffic) traffic.classList.remove('active-traffic');
+            }
+        }
+
+        // --- EXPERIENCE RENDER ---
+        function renderExperiences() {
+            const slider = document.getElementById('auto-slider');
+            slider.innerHTML = "";
+            slider.dataset.cloned = ""; // Reset clone state
+
+            experiencesData.forEach((exp, index) => {
+                const card = document.createElement('div');
+                card.className = 'exp-card';
+                card.innerHTML = `
+                    <div class="exp-info-top">
+                        <span class="exp-date">${exp.date}</span>
+                        <h3 class="exp-role">${exp.role}</h3>
+                        <span class="exp-company">${exp.company}</span>
+                        <span class="exp-location">${exp.location}</span>
+                        <p class="exp-desc-short">${exp.shortDesc}</p>
+                    </div>
+                    <button class="click-details-btn" onclick="openExpModal(${index})">Click more details</button>
+                `;
+                slider.appendChild(card);
+            });
+        }
+
+        // --- EXPERIENCE MODAL LOGIC ---
+        function openExpModal(index) {
+            isPaused = true; 
+            const data = experiencesData[index];
+            document.getElementById('modal-role').textContent = data.role;
+            document.getElementById('modal-company').textContent = data.company;
+            
+            const listContainer = document.getElementById('modal-tasks');
+            listContainer.innerHTML = "";
+            data.tasks.forEach(task => {
+                const li = document.createElement('li');
+                li.textContent = task;
+                listContainer.appendChild(li);
+            });
+
+            const modal = document.getElementById('exp-modal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('active'), 10);
+        }
+
+        function closeExpModal() {
+            const modal = document.getElementById('exp-modal');
+            modal.classList.remove('active');
+            setTimeout(() => {
+                modal.style.display = 'none';
+                isPaused = false; 
+            }, 400);
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('exp-modal');
+            if (event.target == modal) {
+                closeExpModal();
+            }
+        }
+
+        function setupInfiniteScroll() {
+            const slider = document.getElementById('auto-slider');
+            if (!slider.dataset.cloned || slider.dataset.cloned === "") {
+                const clones = slider.innerHTML;
+                slider.innerHTML += clones;
+                slider.dataset.cloned = "true";
+            }
+            
+            scrollPos = 0;
+            isPaused = false;
+            animateScroll();
+        }
+
+        function animateScroll() {
+            if (!isPaused) {
+                const slider = document.getElementById('auto-slider');
+                const totalWidth = slider.scrollWidth / 2;
+
+                scrollPos += 0.8; 
+                if (scrollPos >= totalWidth) {
+                    scrollPos = 0;
+                }
+                slider.style.transform = `translateX(-${scrollPos}px)`;
+            }
+            animationFrameId = requestAnimationFrame(animateScroll);
+        }
+
+        function renderSkills() {
+            const container = document.getElementById('skills-container');
+            container.innerHTML = "";
+            skillsList.forEach((skill, index) => {
+                const card = document.createElement('div');
+                card.className = 'skill-card';
+                const isLeftEntry = index % 2 === 0;
+                card.classList.add(isLeftEntry ? 'fly-left' : 'fly-right');
+                card.innerHTML = `<i class="fa-solid fa-shield-halved"></i> <span>${skill}</span>`;
+                container.appendChild(card);
+                setTimeout(() => card.classList.add('show'), index * 100);
+            });
+        }
+
+        function triggerContactAnimation() {
+            const typingText = "You can reach out to:";
+            const container = document.getElementById('contact-typing');
+            const trafficContainer = document.getElementById('traffic-container');
+            container.textContent = "";
+            for(let j=1; j<=4; j++) {
+                const line = document.getElementById('line'+j);
+                const node = document.getElementById('node'+j);
+                if(line) line.classList.remove('show-line');
+                if(node) node.classList.remove('show');
+            }
+
+            let i = 0;
+            function type() {
+                if (i < typingText.length) {
+                    container.textContent += typingText.charAt(i);
+                    i++; setTimeout(type, 60);
+                } else {
+                    animateSequence(1);
+                }
+            }
+
+            function animateSequence(num) {
+                if (num > 4) {
+                    if(trafficContainer) trafficContainer.classList.add('active-traffic');
+                    return;
+                }
+                const line = document.getElementById('line' + num);
+                const node = document.getElementById('node' + num);
+                if(line) line.classList.add('show-line');
+                setTimeout(() => {
+                    if(node) node.classList.add('show');
+                    setTimeout(() => animateSequence(num + 1), 200);
+                }, 600);
+            }
+            type();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const loader = document.getElementById('loader-wrapper');
+            const loaderTraffic = document.getElementById('loader-traffic');
+            const mainUI = document.getElementById('main-ui');
+            
+            for (let i = 0; i < 12; i++) {
+                let line = document.createElement('div');
+                line.className = 'traffic-line-loader';
+                let angle = Math.random() * Math.PI * 2;
+                line.style.setProperty('--startX', Math.cos(angle) * 150 + 'px');
+                line.style.setProperty('--startY', Math.sin(angle) * 150 + 'px');
+                line.style.setProperty('--rot', angle + 'rad');
+                line.style.animationDelay = (Math.random() * 0.5) + 's';
+                loaderTraffic.appendChild(line);
+            }
+
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                    mainUI.style.visibility = 'visible';
+                    startHeroTypewriter();
+                }, 300);
+            }, 800);
+
+            function startHeroTypewriter() {
+                const textElement = document.getElementById('typewriter-text');
+                const fullText = "More than 5+ years of expertise across Web, Mobile, and API Pentesting. Specialized in Red Teaming and Banking security, backed by a strong bug bounty hunting background.";
+                let i = 0; textElement.textContent = ""; 
+                function typeWriter() {
+                    if (i < fullText.length) {
+                        textElement.textContent += fullText.charAt(i);
+                        i++; setTimeout(typeWriter, 20); 
+                    }
+                }
+                typeWriter();
+            }
+
+            const canvas = document.getElementById('worldCanvas');
+            const ctx = canvas.getContext('2d');
+            let width, height, particles;
+            function init() {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+                particles = [];
+                for (let i = 0; i < 70; i++) {
+                    particles.push({ x: Math.random() * width, y: Math.random() * height, vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4, size: Math.random() * 2 });
+                }
+            }
+            function draw() {
+                ctx.clearRect(0, 0, width, height);
+                ctx.fillStyle = '#00ff00';
+                particles.forEach(p => {
+                    ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+                    p.x += p.vx; p.y += p.vy;
+                    if (p.x < 0 || p.x > width) p.vx *= -1;
+                    if (p.y < 0 || p.y > height) p.vy *= -1;
+                });
+                for(let a=0; a<particles.length; a++) {
+                    for(let b=a+1; b<particles.length; b++) {
+                        let dist = Math.hypot(particles[a].x - particles[b].x, particles[a].y - particles[b].y);
+                        if(dist < 120) {
+                            ctx.strokeStyle = `rgba(0, 255, 0, ${1 - dist/120})`; ctx.lineWidth = 0.5;
+                            ctx.beginPath(); ctx.moveTo(particles[a].x, particles[a].y); ctx.lineTo(particles[b].x, particles[b].y); ctx.stroke();
+                        }
+                    }
+                }
+                requestAnimationFrame(draw);
+            }
+            window.addEventListener('resize', init);
+            init(); draw();
+        });
+    </script>
+</body>
+</html>
