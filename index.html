@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phyo WaThone Win — Red Team Consultant &amp; Penetration Tester</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --surface:#FFFFFF;
+    --ink:#14171A;
+    --ink-soft:#40454B;
+    --ink-faint:#6D7278;
+    --line:#E3E7EC;
+    --accent:#2563EB;
+    --accent-soft:#E8F0FE;
+    --verify:#2563EB;
+    --verify-soft:#E8F0FE;
+    --indigo:#2563EB;
+    --indigo-soft:#E8F0FE;
+    --amber:#2563EB;
+    --amber-soft:#E8F0FE;
+    --maxw:1100px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:'Inter',sans-serif;font-size:16px;line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif;margin:0;letter-spacing:-0.01em;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px;}
+  img{max-width:100%;display:block;}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+
+  /* generic hover-pop used across chips/cards */
+  .pop{transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, background-color .18s ease, color .18s ease;}
+  .pop:hover, .pop.active{
+    transform:translateY(-3px) scale(1.035);
+    box-shadow:0 10px 22px -10px rgba(20,23,26,0.28);
+  }
+
+  /* ---------- NAV (Matrix theme) ---------- */
+  header.nav{
+    position:sticky;top:0;z-index:60;
+    background:#03150a;
+    border-bottom:1px solid rgba(0,255,120,.25);
+    box-shadow:0 1px 0 rgba(0,0,0,.3), 0 6px 18px -12px rgba(0,255,120,.25);
+  }
+  .nav-inner{
+    max-width:var(--maxw);margin:0 auto;padding:14px 28px;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;white-space:nowrap;color:#EAFFF1;}
+  .brand-mark{
+    width:32px;height:32px;border:1.5px solid #00FF7A;flex:none;color:#00FF7A;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;
+    box-shadow:0 0 10px rgba(0,255,120,.35);
+  }
+  nav.links{display:flex;gap:22px;}
+  nav.links a{
+    font-size:13px;color:#9FE8BB;font-weight:600;
+    text-transform:uppercase;letter-spacing:.04em;
+    transition:color .15s ease, transform .15s ease;white-space:nowrap;
+    display:inline-block;
+  }
+  nav.links a:hover{color:#00FF7A;transform:translateY(-2px) scale(1.06);text-shadow:0 0 8px rgba(0,255,120,.5);}
+  .icon-row{display:flex;align-items:center;gap:6px;}
+  .icon-btn{
+    width:36px;height:36px;display:flex;align-items:center;justify-content:center;
+    border:1px solid var(--line);color:var(--ink-soft);flex:none;
+    transition:all .15s ease;
+  }
+  .icon-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);transform:translateY(-3px) scale(1.08);}
+  .icon-btn svg{width:16px;height:16px;}
+  .menu-btn{display:none;background:none;border:1px solid rgba(0,255,120,.4);width:36px;height:36px;cursor:pointer;flex:none;}
+  .menu-btn span{display:block;width:15px;height:1.5px;background:#8CFFAF;margin:3px auto;}
+
+  /* ---------- HERO (Matrix theme) ---------- */
+  .hero{
+    padding:60px 0 48px;
+    position:relative;
+    background:#03150a;
+    overflow:hidden;
+    isolation:isolate;
+  }
+  .hero canvas#matrixRain{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    display:block; z-index:0;
+  }
+  .hero::after{
+    content:"";
+    position:absolute; inset:0; z-index:1;
+    background:
+      radial-gradient(ellipse 900px 500px at 20% 15%, rgba(0,0,0,.35), transparent 60%),
+      linear-gradient(180deg, rgba(1,10,5,.72) 0%, rgba(1,10,5,.82) 45%, rgba(1,8,4,.94) 100%);
+    pointer-events:none;
+  }
+  .hero > .wrap{position:relative; z-index:2;}
+  .hero .doc-tag{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:'JetBrains Mono',monospace;font-size:12px;color:#8CFFAF;
+    border:1px solid rgba(0,255,120,.4);padding:6px 10px;margin-bottom:24px;
+    text-transform:uppercase;letter-spacing:.06em;background:rgba(0,20,10,.55);
+    backdrop-filter:blur(2px);
+  }
+  .hero .doc-tag .dot{width:6px;height:6px;background:#00FF7A;border-radius:50%;box-shadow:0 0 8px #00FF7A;}
+  .hero h1{
+    font-size:clamp(34px,6vw,54px);font-weight:700;line-height:1.06;
+    color:#EAFFF1;
+    text-shadow:0 0 18px rgba(0,255,120,.35);
+  }
+  .hero-top{display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;}
+  .hero-photo{
+    width:88px;height:88px;flex:none;border:1px solid rgba(0,255,120,.5);
+    overflow:hidden;background:#000;
+    box-shadow:0 0 16px rgba(0,255,120,.25);
+  }
+  .hero-photo img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.9) contrast(1.05);}
+  .hero .role{margin-top:12px;font-size:clamp(15px,2.1vw,19px);color:#B9F5CE;font-weight:600;}
+  .hero .role em{color:#00FF7A;font-style:normal;}
+  .hero .locline{
+    margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:13px;color:#7FE3A4;
+    display:flex;align-items:center;gap:6px;
+  }
+  .hero-lede{max-width:620px;margin-top:18px;color:#CFEFDA;font-size:16px;}
+  .hero-actions{display:flex;align-items:center;gap:16px;margin-top:30px;flex-wrap:wrap;}
+  .hero-icons{display:flex;align-items:center;gap:8px;}
+  .hero .btn-static-accent,.hero .btn-static-accent:hover{
+    background:#00FF7A !important;border-color:#00FF7A !important;color:#03150a !important;
+    box-shadow:0 0 18px rgba(0,255,120,.4);
+  }
+  .hero .icon-btn{border-color:rgba(0,255,120,.35);color:#8CFFAF;background:rgba(0,20,10,.4);}
+  .hero .icon-btn:hover{border-color:#00FF7A;color:#03150a;background:#00FF7A;box-shadow:0 0 14px rgba(0,255,120,.5);}
+  @media (max-width:640px){
+    .hero{padding:44px 0 36px;}
+    .hero-photo{width:72px;height:72px;}
+  }
+  .btn{
+    font-family:'JetBrains Mono',monospace;font-size:13px;padding:12px 20px;
+    border:1px solid var(--ink);display:inline-flex;align-items:center;gap:8px;
+    transition:all .15s ease;background:var(--surface);
+  }
+  .btn.primary{background:var(--ink);color:var(--surface);}
+  .btn.primary:hover{background:var(--accent);border-color:var(--accent);}
+  .btn.ghost:hover{background:var(--accent);border-color:var(--accent);color:var(--surface);}
+  .btn-static-accent,.btn-static-accent:hover{background:var(--accent) !important;border-color:var(--accent) !important;color:var(--surface) !important;}
+
+  /* ---------- SECTION SHELL ---------- */
+  section{padding:72px 0;border-top:1px solid var(--line);}
+  .kicker{
+    display:flex;align-items:center;gap:8px;margin-bottom:10px;
+    font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);
+    text-transform:uppercase;letter-spacing:.08em;font-weight:600;
+  }
+  .kicker::before{content:"";width:16px;height:2px;background:var(--accent);display:inline-block;}
+  .sec-head{margin-bottom:34px;}
+  .sec-head h2{font-size:clamp(24px,3.2vw,32px);font-weight:600;}
+  .sec-intro{max-width:640px;color:var(--ink-soft);margin-bottom:36px;font-size:15px;}
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:52px;}
+  .about-grid p{color:var(--ink-soft);margin:0 0 16px;}
+  .about-grid p strong{color:var(--ink);font-weight:700;}
+  .focus-list{list-style:none;margin:0;padding:0;border:1px solid var(--line);background:var(--surface);}
+  .focus-list li{
+    padding:14px 18px;border-bottom:1px solid var(--line);
+    display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:500;
+  }
+  .focus-list li:last-child{border-bottom:none;}
+  .focus-list li:hover{background:var(--accent-soft);}
+  .focus-list .tag{
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--verify);
+    background:var(--verify-soft);padding:3px 8px;flex:none;
+  }
+  .focus-list .tag.active{color:var(--indigo);background:var(--indigo-soft);}
+  .focus-list .tag.learning{color:var(--amber);background:var(--amber-soft);}
+
+  /* ---------- EXPERIENCE ---------- */
+  .exp-item{display:grid;grid-template-columns:56px 1fr;gap:20px;padding:30px 0;border-bottom:1px solid var(--line);}
+  .exp-item:first-child{padding-top:0;}
+  .exp-item:last-child{border-bottom:none;}
+  .co-logo{
+    width:52px;height:52px;display:flex;align-items:center;justify-content:center;
+    overflow:hidden;flex:none;
+  }
+  .co-logo img{width:100%;height:100%;object-fit:cover;display:block;}
+  .co-logo.c1{background:var(--accent);}
+  .co-logo.c2{background:var(--indigo);}
+  .co-logo.c3{background:var(--verify);}
+  .co-logo.c4{background:var(--amber);}
+  .co-logo.c5{background:#565B62;}
+  .exp-top{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px 16px;}
+  .exp-role{font-size:18px;font-weight:700;font-family:'Space Grotesk',sans-serif;}
+  .exp-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-faint);white-space:nowrap;}
+  .exp-org{color:var(--accent);font-weight:600;font-size:14px;margin-top:3px;}
+  .exp-loc{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-faint);margin-top:2px;}
+  .exp-item ul{margin:14px 0 0;padding-left:18px;color:var(--ink-soft);font-size:14.5px;columns:1;}
+  .exp-item li{margin-bottom:6px;}
+  .exp-item ul.collapsed{overflow:hidden;position:relative;}
+  .exp-item ul.collapsed::after{
+    content:"";position:absolute;left:0;right:0;bottom:0;height:34px;
+    background:linear-gradient(to bottom, rgba(255,255,255,0), var(--surface));
+  }
+  .show-more-btn{
+    margin-top:10px;background:none;border:none;padding:0;cursor:pointer;
+    color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:600;
+    display:inline-flex;align-items:center;gap:4px;transition:opacity .15s ease;
+  }
+  .show-more-btn:hover{opacity:.7;text-decoration:underline;}
+  .placeholder-note{
+    margin-top:24px;font-size:12.5px;color:var(--ink-faint);font-family:'JetBrains Mono',monospace;
+    border-left:2px solid var(--line);padding-left:12px;
+  }
+
+  /* ---------- CERTIFICATIONS (badges) ---------- */
+  /* ---------- CERTIFICATIONS (Matrix theme) ---------- */
+  #certifications{
+    background:#03150a;
+    border-top:1px solid rgba(0,255,120,.25);
+    border-bottom:1px solid rgba(0,255,120,.25);
+    position:relative;
+  }
+  #certifications .kicker{color:#00FF7A;}
+  #certifications .kicker::before{background:#00FF7A;}
+  #certifications .sec-head h2{color:#EAFFF1;}
+  #certifications .sec-intro{color:#9FE8BB;font-family:'JetBrains Mono',monospace;font-size:13px;}
+  .badge-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:22px 16px;}
+  .badge-item{position:relative;display:flex;flex-direction:column;align-items:center;cursor:pointer;text-align:center;}
+  .badge-shield{
+    width:104px;height:104px;
+    border-radius:14px;
+    border:1px solid rgba(0,255,120,.3);
+    background:rgba(0,20,10,.55);
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;padding:12px;
+    box-shadow:0 0 0 rgba(0,255,120,0);
+    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+  .badge-shield img{width:100%;height:100%;object-fit:contain;display:block;}
+  .badge-item:hover .badge-shield, .badge-item.active .badge-shield{
+    transform:translateY(-4px);
+    box-shadow:0 0 22px rgba(0,255,120,.45);
+    border-color:#00FF7A;
+  }
+  .badge-label{margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#7FE3A4;}
+  .badge-tooltip{
+    position:absolute;bottom:calc(100% + 8px);left:50%;transform:translate(-50%,4px);
+    background:#00FF7A;color:#03150a;font-size:11.5px;font-family:'Inter',sans-serif;font-weight:600;
+    padding:8px 12px;border-radius:2px;white-space:nowrap;max-width:220px;white-space:normal;width:max-content;max-width:200px;
+    text-align:center;opacity:0;pointer-events:none;transition:opacity .15s ease, transform .15s ease;z-index:5;
+  }
+  .badge-tooltip::after{
+    content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);
+    border:5px solid transparent;border-top-color:#00FF7A;
+  }
+  .badge-item:hover .badge-tooltip, .badge-item.active .badge-tooltip{
+    opacity:1;transform:translate(-50%,0);
+  }
+
+  /* ---------- CAPABILITY MATRIX ---------- */
+  .matrix{width:100%;border-collapse:collapse;border:1px solid var(--line);background:var(--surface);}
+  .matrix th{
+    text-align:left;font-family:'JetBrains Mono',monospace;font-size:11px;
+    text-transform:uppercase;letter-spacing:.05em;color:var(--ink-faint);
+    padding:14px 18px;border-bottom:1px solid var(--line);
+  }
+  .matrix td{padding:16px 18px;border-bottom:1px solid var(--line);vertical-align:top;font-size:14.5px;}
+  .matrix tr:last-child td{border-bottom:none;}
+  .matrix td.cat{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;white-space:nowrap;}
+  .matrix td.items{color:var(--ink-soft);}
+  .level{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink-soft);}
+  .level .bar{width:36px;height:5px;background:var(--line);position:relative;overflow:hidden;}
+  .level .bar span{position:absolute;left:0;top:0;bottom:0;background:var(--accent);}
+
+  /* ---------- EDUCATION ---------- */
+  .edu-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;}
+  .edu-card{border:1px solid var(--line);background:var(--surface);display:flex;gap:16px;padding:20px;}
+  .edu-card:hover{border-color:var(--accent);background:var(--accent-soft);}
+  .edu-card:hover .edu-photo{background:var(--surface);color:var(--accent);}
+  .edu-photo{
+    width:64px;height:64px;flex:none;background:var(--line);
+    overflow:hidden;
+  }
+  .edu-photo img{width:100%;height:100%;object-fit:cover;display:block;}
+  .edu-school{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;}
+  .edu-degree{color:var(--ink-soft);font-size:13.5px;margin-top:4px;}
+  .edu-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-faint);margin-top:6px;}
+
+  /* ---------- BUG BOUNTY ---------- */
+  .bounty-row{display:flex;flex-wrap:wrap;gap:10px;}
+  .bounty-chip{
+    border:1px solid var(--line);background:var(--surface);
+    padding:11px 16px;font-family:'JetBrains Mono',monospace;font-size:12.5px;
+    display:flex;align-items:center;gap:9px;cursor:pointer;
+  }
+  .bounty-chip .dot{width:6px;height:6px;flex:none;}
+  .bounty-chip.h1{border-color:transparent;}
+  .bounty-chip:nth-child(4n+1):hover{background:var(--accent-soft);border-color:var(--accent);}
+  .bounty-chip:nth-child(4n+1) .dot{background:var(--accent);}
+  .bounty-chip:nth-child(4n+2):hover{background:var(--verify-soft);border-color:var(--verify);}
+  .bounty-chip:nth-child(4n+2) .dot{background:var(--verify);}
+  .bounty-chip:nth-child(4n+3):hover{background:var(--indigo-soft);border-color:var(--indigo);}
+  .bounty-chip:nth-child(4n+3) .dot{background:var(--indigo);}
+  .bounty-chip:nth-child(4n+4):hover{background:var(--amber-soft);border-color:var(--amber);}
+  .bounty-chip:nth-child(4n+4) .dot{background:var(--amber);}
+  .bounty-chip span.date{color:var(--ink-faint);font-size:11px;}
+
+  /* ---------- PUBLICATIONS ---------- */
+  .post-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+  .post-card{border:1px solid var(--line);background:var(--surface);padding:22px;display:flex;flex-direction:column;height:100%;}
+  .post-card:hover{border-color:var(--accent);background:var(--accent-soft);}
+  .post-date{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink-faint);}
+  .post-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16.5px;margin-top:10px;flex-grow:1;}
+  .post-more{margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--verify);word-break:break-all;}
+  .post-more:hover{text-decoration:underline;}
+
+  /* ---------- SKILLS & TOOLS ---------- */
+  .chip-group{margin-bottom:32px;}
+  .chip-group h4{font-family:'JetBrains Mono',monospace;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-faint);margin-bottom:14px;}
+  .chip-wrap{display:flex;flex-wrap:wrap;gap:9px;}
+  .chip{
+    border:1px solid var(--line);background:var(--surface);padding:8px 14px;
+    font-size:13px;font-weight:500;color:var(--ink-soft);cursor:default;
+  }
+  .chip:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
+  .chip.tool{font-family:'JetBrains Mono',monospace;font-size:12.5px;}
+  .chip.tool:hover{border-color:var(--indigo);color:var(--indigo);background:var(--indigo-soft);}
+
+  /* ---------- RESUME ---------- */
+  .resume-card{border:1px solid var(--line);background:var(--surface);overflow:hidden;}
+  .resume-bar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:12px 18px;border-bottom:1px solid var(--line);background:var(--bg);
+  }
+  .resume-bar .fname{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--ink-soft);display:flex;align-items:center;gap:8px;}
+  .resume-bar .fname .dot{width:7px;height:7px;background:var(--verify);border-radius:50%;}
+  .resume-body{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:14px;padding:36px 20px;color:var(--ink-faint);text-align:center;
+  }
+  .resume-icon{width:40px;height:40px;color:var(--accent);}
+  .resume-body p{margin:0;font-size:13.5px;font-family:'JetBrains Mono',monospace;}
+  .resume-foot{padding:18px;display:flex;justify-content:flex-end;gap:12px;border-top:1px solid var(--line);flex-wrap:wrap;}
+  .resume-loading{padding:56px 20px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink-faint);}
+  .resume-loading a{color:var(--accent);font-weight:600;}
+  .resume-loading a:hover{text-decoration:underline;}
+  .resume-viewer{display:flex;flex-direction:column;width:100%;}
+  .resume-toolbar{
+    display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+    padding:10px 16px;border-bottom:1px solid var(--line);background:var(--bg);
+    font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--ink-soft);
+  }
+  .rv-group{display:flex;align-items:center;gap:8px;}
+  .rv-btn{
+    border:1px solid var(--line);background:var(--surface);width:28px;height:28px;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink-soft);
+    font-family:'JetBrains Mono',monospace;font-size:15px;line-height:1;
+    transition:all .15s ease;padding:0;
+  }
+  .rv-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent);background:var(--accent-soft);}
+  .rv-btn:disabled{opacity:.35;cursor:default;}
+  .resume-canvas-wrap{
+    overflow:auto;max-height:460px;background:#EEEFEC;box-sizing:border-box;width:100%;
+    display:flex;flex-direction:column;align-items:center;gap:20px;padding:18px;
+  }
+  .resume-canvas-wrap canvas{background:#fff;box-shadow:0 4px 16px -6px rgba(20,23,26,0.3);flex-shrink:0;}
+  @media (max-width:680px){
+    .resume-canvas-wrap{max-height:360px;padding:12px;gap:14px;}
+  }
+
+  /* ---------- CONTACT ---------- */
+  .contact-block{border:1px solid var(--line);background:var(--surface);display:grid;grid-template-columns:1fr 1fr;}
+  .contact-left{padding:44px;border-right:1px solid var(--line);}
+  .contact-left h3{font-size:25px;font-weight:700;max-width:380px;}
+  .contact-left p{color:var(--ink-soft);margin-top:14px;font-size:14.5px;max-width:360px;}
+  .contact-right{padding:44px;}
+  .poc-row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--line);font-size:14px;gap:12px;}
+  .poc-row:last-child{border-bottom:none;}
+  .poc-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.05em;flex:none;}
+  .poc-value{text-align:right;}
+  .poc-value a{font-weight:600;}
+  .poc-value a:hover{color:var(--accent);}
+
+  footer{
+    padding:26px 0;border-top:1px solid rgba(0,255,120,.25);
+    background:#03150a;
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:'JetBrains Mono',monospace;font-size:12px;color:#9FE8BB;flex-wrap:wrap;gap:14px;
+  }
+  .foot-mid{color:#5FBF88;}
+  .foot-icons{display:flex;gap:8px;}
+  .foot-icons .icon-btn{width:32px;height:32px;border-color:rgba(0,255,120,.35);color:#8CFFAF;background:rgba(0,20,10,.4);}
+  .foot-icons .icon-btn:hover{border-color:#00FF7A;color:#03150a;background:#00FF7A;box-shadow:0 0 12px rgba(0,255,120,.45);}
+  .foot-icons svg{width:14px;height:14px;}
+
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease;}
+  .reveal.in{opacity:1;transform:none;}
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none;}html{scroll-behavior:auto;}}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:860px){
+    .about-grid{grid-template-columns:1fr;gap:32px;}
+    .post-grid{grid-template-columns:repeat(2,1fr);}
+    .contact-block{grid-template-columns:1fr;}
+    .contact-left{border-right:none;border-bottom:1px solid var(--line);}
+  }
+  @media (max-width:680px){
+    .nav-inner{padding:12px 18px;}
+    .wrap{padding:0 18px;}
+    nav.links{
+      position:fixed;top:63px;left:0;right:0;background:#03150a;
+      flex-direction:column;gap:0;border-top:1px solid rgba(0,255,120,.25);border-bottom:1px solid rgba(0,255,120,.25);
+      max-height:0;overflow:hidden;transition:max-height .25s ease;z-index:55;
+    }
+    nav.links.open{max-height:420px;overflow-y:auto;}
+    nav.links a{padding:15px 20px;border-bottom:1px solid rgba(0,255,120,.15);width:100%;}
+    .menu-btn{display:block;}
+    .exp-item{grid-template-columns:1fr;}
+    .co-logo{width:40px;height:40px;font-size:10px;}
+    .post-grid{grid-template-columns:1fr;}
+    .matrix{display:block;overflow-x:auto;white-space:nowrap;}
+    section{padding:52px 0;}
+    .contact-left,.contact-right{padding:26px;}
+    .badge-grid{grid-template-columns:repeat(auto-fill,minmax(96px,1fr));}
+    .badge-shield{width:80px;height:80px;border-radius:12px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="#top" class="brand" aria-label="Home"><span class="brand-mark">PW</span></a>
+    <nav class="links" id="navLinks">
+      <a href="#about">About</a>
+      <a href="#experience">Experience</a>
+      <a href="#certifications">Certifications</a>
+      <a href="#education">Education</a>
+      <a href="#expertise">Expertise</a>
+      <a href="#bounty">Bug Bounty</a>
+      <a href="#publications">Publications</a>
+      <a href="#skills">Skills</a>
+      <a href="#resume">Resume</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <button class="menu-btn" id="menuBtn" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero" style="border-top:none;">
+    <canvas id="matrixRain" aria-hidden="true"></canvas>
+    <div class="wrap">
+      <div class="doc-tag"><span class="dot"></span>Portfolio — Public</div>
+      <div class="hero-top">
+        <div class="hero-photo"><img src="phyowathonewin.jpg" alt="Profile photo"></div>
+        <div>
+          <h1>Phyo WaThone Win</h1>
+          <div class="role">Red Team Consultant &amp; Penetration Tester</div>
+        </div>
+      </div>
+      <div class="locline">📍 Bangkok, Yangon</div>
+      <p class="hero-lede">Offensive security specialist focused on Red Team Operations, Active Directory, Web, Mobile, and API penetration testing.</p>
+      <div class="hero-actions">
+        <a href="#resume" class="btn ghost btn-static-accent">View resume</a>
+        <div class="hero-icons">
+          <a href="mailto:wathonewin.work@gmail.com" class="icon-btn" title="Email" aria-label="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><polyline points="4 4 12 13 20 4"/></svg></a>
+          <a href="https://www.linkedin.com/in/phyowathonewin" target="_blank" rel="noopener" class="icon-btn" title="LinkedIn" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4V8h4v1.5A5.5 5.5 0 0 1 16 8z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://github.com/PhyoWaThoneWin" target="_blank" rel="noopener" class="icon-btn" title="GitHub" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a>
+          <a href="tel:+9595102202" class="icon-btn" title="Mobile" aria-label="Mobile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.4 2.1L8.1 9.7a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.4c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.9 2.2z"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="wrap">
+      <div class="sec-head"><div class="kicker">About</div><h2>About me</h2></div>
+      <div class="about-grid">
+        <div class="reveal">
+          <p>I am an <strong>experienced Offensive Security professional with over 6 years of specialized experience</strong> in Penetration Testing and Red Teaming. Currently serving as a Red Team Consultant at <strong>Hacktilizer Cybersecurity Consulting</strong>, my expertise spans across Active Directory Security, Web, API, and Mobile (Android, iOS) Application testing.</p>
+          <p>My experience spans across diverse sectors, including <strong>banking, NGOs, and boutique cybersecurity consultancies</strong>. I hold a solid track record of practical offensive security certifications and keep myself hands-on with <strong>SIEM and blue-team triage</strong> to understand both attack and defense strategies.</p>
+          <p>Outside of client work, I contribute to public and private bug bounty programs and have received recognition from organizations including Google, Proton, Dell, SANS, Tecno, Binance, NASA, UK Gov, and Singapore GovTech for responsibly disclosed findings.</p>
+        </div>
+        <ul class="focus-list reveal">
+          <li>Red Team Operations <span class="tag">Core</span></li>
+          <li>Active Directory <span class="tag">Core</span></li>
+          <li>Web &amp; API Penetration Testing <span class="tag">Core</span></li>
+          <li>Mobile App Penetration Testing <span class="tag">Core</span></li>
+          <li>Application Security <span class="tag">Core</span></li>
+          <li>Thick Client Penetration Testing <span class="tag active">Active</span></li>
+          <li>Blue Team / SIEM Triage <span class="tag learning">Learning</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="experience">
+    <div class="wrap">
+      <div class="sec-head"><div class="kicker">Career</div><h2>Experience</h2></div>
+
+      <div class="exp-item wide reveal">
+        <div class="co-logo c1"><img src="hacktilizer.jpg" alt="Hacktilizer Cybersecurity Consulting logo"></div>
+        <div>
+          <div class="exp-top"><div class="exp-role">Red Team Consultant</div><div class="exp-date">Dec 2025 – Present · 8 mos</div></div>
+          <div class="exp-org">Hacktilizer Cybersecurity Consulting · Full-time</div>
+          <div class="exp-loc">Yangon, Myanmar · Hybrid</div>
+          <ul>
+            <li>Delivered 10+ client penetration testing engagements across diverse sectors including Food & Beverage, Delivery Services, and Education, tailoring methodologies to each industry's unique risk profile and compliance requirements.</li>
+            <li>Conducted comprehensive security assessments spanning Web, API, Android, and iOS platforms, ensuring full-spectrum coverage across client digital ecosystems.</li>
+            <li>Performed assessments using both Black-box and Grey-box testing methodologies, adapting approach based on client requirements, threat modeling, and available access levels to maximize test coverage and realism.</li>
+            <li>Identified and validated 40+ critical-severity vulnerabilities across multiple client sectors, providing precise risk prioritization and actionable remediation guidance to mitigate high-impact business risks.</li>
+            <li>Discovered and validated critical exploits to accurately measure severity and real-world business impact, ensuring precise risk prioritization and zero false positives.</li>
+            <li>Authored professional-grade technical reports featuring detailed Proof-of-Concept (POC) documentation and clear technical explanations, elevating report quality beyond standard findings summaries to support faster client remediation.</li>
+            <li>Maintained direct client communication throughout the engagement lifecycle, coordinating vulnerability resolution and confirmation with vendor teams to ensure closed-loop remediation.</li>
+            <li>Contributed validated, vendor-confirmed findings to published security research blogs, sharing real-world vulnerability insights with the broader security community following responsible disclosure and resolution.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-item wide reveal">
+        <div class="co-logo c2"><img src="ayabank.png" alt="AYA Bank logo"></div>
+        <div>
+          <div class="exp-top"><div class="exp-role">Cyber Security Specialist</div><div class="exp-date">Aug 2023 – Mar 2024 · 8 mos</div></div>
+          <div class="exp-org">AYA Bank · Full-time</div>
+          <div class="exp-loc">Yangon, Myanmar · On-site</div>
+          <ul>
+            <li>Delivered 40+ comprehensive penetration tests focusing heavily on high-risk Web applications and Android APKs alongside annual assessments and major-change projects, ensuring robust security across digital platforms.</li>
+            <li>Contributed as a core member of advanced Red Team engagements, successfully identifying critical flaws and translating complex technical findings into practical remediation actions for stakeholders.</li>
+            <li>Executed comprehensive security assessments including Vulnerability Assessments, Internal Penetration Testing, and Web/API/Android application testing across Black-box, Grey-box, and White-box methodologies to proactively identify system risks.</li>
+            <li>Discovered and validated critical exploits to accurately measure severity and real-world business impact, ensuring precise risk prioritization and zero false positives.</li>
+            <li>Authored detailed technical and executive reports mapping out vulnerability exploitation methods and strategic remediation steps, effectively translating complex security findings for both technical teams and stakeholders.</li>
+            <li>Led compliance-driven security reviews, specifically conducting PCI-DSS assessments to ensure client networks and data-handling applications met strict regulatory standards.</li>
+            <li>Facilitated Purple Teaming exercises and closely coordinated with the SOC team to enhance incident response capabilities, optimize detection rules, and bridge the gap between offensive and defensive security.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-item wide reveal">
+  <div class="co-logo c3"><img src="onow.png" alt="ONOW Myanmar logo"></div>
+  <div>
+    <div class="exp-top"><div class="exp-role">Security Analyst</div><div class="exp-date">Jul 2022 – Aug 2023 · 1 yr 2 mos</div></div>
+    <div class="exp-org">ONOW Myanmar · Full-time</div>
+    <ul>
+      <li>Strengthened organizational security posture by designing and executing Security Awareness programs and simulated Phishing Testing campaigns, significantly reducing human-error risks.</li>
+      <li>Conducted advanced Penetration Testing across Cloud infrastructure and Web applications to identify, validate, and mitigate critical security gaps before deployment.</li>
+      <li>Developed and implemented robust security policies and procedures, aligning internal operations with industry frameworks and compliance standards to ensure continuous data protection.</li>
+      <li>Proactively monitored emerging threats, attacks, and vulnerabilities using SIEM and security tools, ensuring rapid detection, analysis, and effective incident response.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="exp-item wide reveal">
+  <div class="co-logo c4"><img src="lattwaespace.jpg" alt="Lat Twae Space logo"></div>
+  <div>
+    <div class="exp-top"><div class="exp-role">Instructor</div><div class="exp-date">Nov 2022 – May 2023 · 7 mos</div></div>
+    <div class="exp-org">Lat Twae Space · Part-time</div>
+    <div class="exp-loc">Myanmar</div>
+    <ul>
+      <li>Cybersecurity training</li>
+      <li>Linux training</li>
+    </ul>
+  </div>
+</div>
+
+      <div class="exp-item wide reveal">
+        <div class="co-logo c5"><img src="mst.png" alt="M.S.T University logo"></div>
+        <div>
+          <div class="exp-top"><div class="exp-role">Lecturer &amp; Pentester</div><div class="exp-date">Jan 2020 – Jul 2022 · 2 yrs 7 mos</div></div>
+          <div class="exp-org">M.S.T University · Full-time</div>
+          <div class="exp-loc">Yangon, Myanmar · Hybrid</div>
+          <ul>
+            <li>Delivered comprehensive ITPEC training to students, breaking down complex computer science fundamentals and system analysis concepts into actionable learning modules.</li>
+            <li>Instructed and mentored students on advanced Certified Ethical Hacker (CEH) concepts, guiding them through theoretical frameworks and hands-on lab practicals to develop real-world hacking skills.</li>
+            <li>Designed and supervised hands-on Networking and Microsoft Windows Server labs, enabling students to successfully configure Cisco devices and manage enterprise server environments.</li>
+            <li>Led practical sessions on Software & Hardware Troubleshooting and enterprise-grade Network Installation, equipping students with essential technical field skills.</li>
+            <li>Conducted authorized Penetration Testing and Security Assessments on client-requested environments and assets, identifying critical vulnerabilities and delivering actionable remediation insights to safeguard sensitive information.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="certifications">
+    <div class="wrap">
+      <div class="sec-head"><div class="kicker">Credentials</div><h2>Certifications</h2></div>
+      <p class="sec-intro">Double-click a badge to open its credential link.</p>
+      <div class="badge-grid" id="badgeGrid">
+        <div class="badge-item" data-cred="https://example.com/verify/CPTS"><div class="badge-shield teal"><img src="CPTS.jpg" alt="CPTS badge"></div><div class="badge-label">CPTS</div><div class="badge-tooltip">HTB Certified Penetration Testing Specialist</div></div>
+        <div class="badge-item" data-cred="https://example.com/verify/ASCP"><div class="badge-shield red"><img src="ASCP.jpg" alt="ASCP badge"></div><div class="badge-label">ASCP</div><div class="badge-tooltip">Offensive Security Certification</div></div>
+        <div class="badge-item" data-cred="https://example.com/verify/ACP"><div class="badge-shield red"><img src="ACP.jpg" alt="ACP badge"></div><div class="badge-label">ACP</div><div class="badge-tooltip">Offensive Security Certification</div></div>
+        <div class="badge-item" data-cred="https://example.com/verify/CASA"><div class="badge-shield indigo"><img src="CASA.jpg" alt="CASA badge"></div><div class="badge-label">CASA</div><div class="badge-tooltip">Cloud / Azure Security Certification</div></div>
+        <div class="badge-item" data-cred="https://example.com/verify/CRTO"><div class="badge-shield red"><img src="CRTO.jpg" alt="CRTO badge"></div><div class="badge-label">CRTO</div><div class="badge-tooltip">Certified Red Team Operator</div></div>
+        <div class="badge-item" data-cred="https://example.com/verify/CRTP"><div class="badge-shield red"><img src="CRTP.png" alt="CRTP badge"></div><div class="badge-label">CRTP</div><div class="badge-tooltip">Certified Red Team Professional</div></div>
+        <div class="badge-item" data-cred="https://example.com/verify/CRTSv2"><div class="badge-shield red"><img src="CRTS.jpg" alt="CRTSv2 badge"></div><div class="badge-label">CRTSv2</div><div class="badge-tooltip">Certified Red Team Specialist v2</div></div>
+        <div class="badge-item" data-cred="https://example.com/verify/CJCA"><div class="badge-shield teal"><img src="CJCA.png" alt="CJCA badge"></div><div class="badge-label">CJCA</div><div class="badge-tooltip">HTB Certified Junior Cybersecurity Analyst</div></div>
+        <div class="badge-item" data-cred="https://example.com/verify/CRTA"><div class="badge-shield red"><img src="CRTA.jpg" alt="CRTA badge"></div><div class="badge-label">CRTA</div><div class="badge-tooltip">Certified Red Team Analyst</div></div>
+        <div class="badge-item" data-cred="https://example.com/verify/MCRTA"><div class="badge-shield indigo"><img src="MCRTA.jpg" alt="MCRTA badge"></div><div class="badge-label">MCRTA</div><div class="badge-tooltip">Multi-Cloud Red Team Analyst</div></div>
+        <div class="badge-item" data-cred="https://example.com/verify/CMPen"><div class="badge-shield amber"><img src="CMPEN.png" alt="CMPen badge"></div><div class="badge-label">CMPen</div><div class="badge-tooltip">Certified Mobile Penetration Tester</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="education">
+    <div class="wrap">
+      <div class="sec-head"><div class="kicker">Education</div><h2>Education</h2></div>
+      <div class="edu-grid">
+        <div class="edu-card pop reveal">
+          <div class="edu-photo"><img src="uclan.png" alt="School crest"></div>
+          <div>
+            <div class="edu-school">University of Lancashire</div>
+            <div class="edu-degree">B.Sc (Hons) Cyber Security and Networking, UK</div>
+            <div class="edu-date">Mar 2022 – Jan 2023</div>
+          </div>
+        </div>
+        <div class="edu-card pop reveal">
+          <div class="edu-photo"><img src="mst.png" alt="School crest"></div>
+          <div>
+            <div class="edu-school">M.S.T University</div>
+            <div class="edu-degree">Higher National Diploma (SQA / UK), Computer Science</div>
+            <div class="edu-date">2017 – 2019</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="expertise">
+    <div class="wrap">
+      <div class="sec-head"><div class="kicker">Capability</div><h2>Capability matrix</h2></div>
+      <p class="sec-intro">Core technical areas grouped by discipline.</p>
+      <table class="matrix">
+        <thead><tr><th>Category</th><th>Focus areas</th><th>Depth</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="cat">Red Teaming</td>
+            <td class="items">Adversary simulation, C2 operations, Cobalt Strike, engagement planning</td>
+            <td><span class="level"><span class="bar"><span style="width:70%"></span></span>Proficient</span></td>
+          </tr>
+          <tr>
+            <td class="cat">Active Directory</td>
+            <td class="items">Kerberos abuse, delegation attacks, security misconfiguration, privilege escaltion, domain dominance, lateral movenment</td>
+            <td><span class="level"><span class="bar"><span style="width:80%"></span></span>Advanced</span></td>
+          </tr>
+          <tr>
+            <td class="cat">Web / API</td>
+            <td class="items">OWASP Web Top 10, OWASP API Top 10, business logic flaws, security misconfiguration testing, resource testing, Race Conditions, API abuse</td>
+            <td><span class="level"><span class="bar"><span style="width:90%"></span></span>Expert</span></td>
+          </tr>
+          <tr>
+            <td class="cat">Thick Client</td>
+            <td class="items">Reverse engineering, traffic interception, local storage analysis, memory dumping, privilege escalation</td>
+            <td><span class="level"><span class="bar"><span style="width:70%"></span></span>Proficient</span></td>
+          </tr>
+          <tr>
+            <td class="cat">Mobile</td>
+            <td class="items">OWASP Mobile Top 10, Android/iOS app assessment, traffic interception, runtime instrumentation</td>
+            <td><span class="level"><span class="bar"><span style="width:80%"></span></span>Advanced</span></td>
+          </tr>
+          <tr>
+            <td class="cat">Blue Team / SIEM</td>
+            <td class="items">Alert triage, MITRE ATT&amp;CK mapping, Kibana / Elastic investigation</td>
+            <td><span class="level"><span class="bar"><span style="width:55%"></span></span>Developing</span></td>
+          </tr>
+          <tr>
+            <td class="cat">Reporting & Consulting</td>
+            <td class="items">Technical reporting, vulnerability remediation guidance, executive debriefs, risk rating (CVSS)</td>
+            <td><span class="level"><span class="bar"><span style="width:80%"></span></span>Advanced</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="bounty">
+    <div class="wrap">
+      <div class="sec-head"><div class="kicker">Recognition</div><h2>Bug bounty recognition</h2></div>
+      <p class="sec-intro">Recognized by the following organizations for responsibly disclosed findings.</p>
+      <div class="bounty-row" id="bountyGrid">
+        <!-- chips injected are static below -->
+      </div>
+    </div>
+  </section>
+
+  <section id="publications">
+    <div class="wrap">
+      <div class="sec-head"><div class="kicker">Research</div><h2>Publications</h2></div>
+      <p class="sec-intro">Selected write-ups and disclosures.</p>
+      <div class="post-grid">
+        <div class="post-card pop reveal">
+          <div class="post-date">Jun 8, 2024</div>
+          <div class="post-title">Android Penetration Testing Series</div>
+          <a href="https://medium.com/@phyowathone" target="_blank" rel="noopener" class="post-more">medium.com/@phyowathone →</a>
+        </div>
+        <div class="post-card pop reveal">
+          <div class="post-date">Tecno Security Research Center</div>
+          <div class="post-title">Beginner's Guide: Basic Methods for Finding Android Application Vulnerabilities</div>
+          <a href="https://security.tecno.com/SRC/blogdetail/385?lang=en_US" target="_blank" rel="noopener" class="post-more">security.tecno.com/SRC →</a>
+        </div>
+        <div class="post-card pop reveal">
+          <div class="post-date">Ongoing</div>
+          <div class="post-title">Pentesting &amp; Security Research Notes</div>
+          <a href="https://medium.com/@phyowathone" target="_blank" rel="noopener" class="post-more">medium.com/@phyowathone →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="skills">
+    <div class="wrap">
+      <div class="sec-head"><div class="kicker">Toolkit</div><h2>Skills &amp; Tools</h2></div>
+      <div class="chip-group reveal">
+        <h4>Skills</h4>
+        <div class="chip-wrap">
+          <span class="chip pop">PCI DSS</span><span class="chip pop">Bug Bounty Hunting</span><span class="chip pop">Thick Client Penetration Testing</span>
+          <span class="chip pop">Network Penetration Testing</span><span class="chip pop">Website Penetration Testing</span><span class="chip pop">Mobile Application Penetration Testing</span>
+          <span class="chip pop">Endpoint Detection &amp; Response</span><span class="chip pop">Incident Response</span><span class="chip pop">Penetration Testing</span>
+          <span class="chip pop">Networking</span><span class="chip pop">Computer Hardware Troubleshooting</span><span class="chip pop">Windows Server</span>
+          <span class="chip pop">Ethical Hacking</span><span class="chip pop">Operating System Administration</span><span class="chip pop">Patch Management</span>
+          <span class="chip pop">Vulnerability Management</span><span class="chip pop">Communication</span><span class="chip pop">Information Security</span>
+          <span class="chip pop">Red Team Operation</span><span class="chip pop">Standard Reporting &amp; Communication</span>
+        </div>
+      </div>
+      <div class="chip-group reveal">
+        <h4>Tools</h4>
+        <div class="chip-wrap">
+          <span class="chip tool pop">Burp Suite</span><span class="chip tool pop">Nessus</span><span class="chip tool pop">Kali Linux</span>
+          <span class="chip tool pop">John the Ripper</span><span class="chip tool pop">Nmap</span><span class="chip tool pop">Metasploit</span>
+          <span class="chip tool pop">sqlmap</span><span class="chip tool pop">Hydra</span><span class="chip tool pop">Cobalt Strike</span>
+          <span class="chip tool pop">Wireshark</span><span class="chip tool pop">MobSF</span><span class="chip tool pop">ADB</span>
+          <span class="chip tool pop">APKTool</span><span class="chip tool pop">Jadx-GUI</span><span class="chip tool pop">Rubeus</span><span class="chip tool pop">Mimikatz</span><span class="chip tool pop">Nuclei</span><span class="chip tool pop">ffuf</span><span class="chip tool pop">BloodHound</span><span class="chip tool pop">Impacket Suite</span><span class="chip tool pop">Crackmapexec</span><span class="chip tool pop">Kibana</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="resume">
+    <div class="wrap">
+      <div class="sec-head"><div class="kicker">Download</div><h2>Resume</h2></div>
+      <div class="resume-card reveal">
+        <div class="resume-bar">
+          <div class="fname"><span class="dot"></span>resume.pdf — phyo@portfolio</div>
+        </div>
+        <div class="resume-body" id="resumeBody">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="resume-icon"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+          <p>Preview the resume right here, or download a copy.</p>
+          <button type="button" class="btn primary" onclick="loadResumePDF()">Load resume PDF</button>
+        </div>
+        <div class="resume-foot">
+          <a href="resume.pdf" download class="btn primary btn-static-accent">Download resume →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="wrap">
+      <div class="sec-head"><div class="kicker">Say hello</div><h2>Contact</h2></div>
+      <div class="contact-block reveal">
+        <div class="contact-left">
+          <h3>Open to red team and penetration testing engagements.</h3>
+          <p>Reach out directly, or connect through any of the channels listed.</p>
+          <a href="mailto:wathonewin.work@gmail.com" class="btn primary" style="margin-top:24px;">Send an email →</a>
+        </div>
+        <div class="contact-right">
+          <div class="poc-row"><span class="poc-label">Email</span><span class="poc-value"><a href="mailto:wathonewin.work@gmail.com">wathonewin.work@gmail.com</a></span></div>
+          <div class="poc-row"><span class="poc-label">Mobile</span><span class="poc-value"><a href="tel:+9595102202">+9595102202</a></span></div>
+          <div class="poc-row"><span class="poc-label">LinkedIn</span><span class="poc-value"><a href="https://www.linkedin.com/in/phyowathonewin" target="_blank" rel="noopener">@phyowathonewin</a></span></div>
+          <div class="poc-row"><span class="poc-label">GitHub</span><span class="poc-value"><a href="https://github.com/PhyoWaThoneWin" target="_blank" rel="noopener">@PhyoWaThoneWin</a></span></div>
+          <div class="poc-row"><span class="poc-label">HTB Profile</span><span class="poc-value"><a href="https://github.com/PhyoWaThoneWin" target="_blank" rel="noopener">github.com/PhyoWaThoneWin</a></span></div>
+          <div class="poc-row"><span class="poc-label">Location</span><span class="poc-value">Bangkok, Yangon</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap" style="width:100%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;">
+    <span>© 2026 Phyo WaThone Win</span>
+    <span class="foot-mid">Offensive Security · Red Team Consultant</span>
+    <div class="foot-icons">
+      <a href="mailto:wathonewin.work@gmail.com" class="icon-btn" aria-label="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><polyline points="4 4 12 13 20 4"/></svg></a>
+      <a href="tel:+959000000000" class="icon-btn" aria-label="Phone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.4 2.1L8.1 9.7a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.1-.4c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.9 2.2z"/></svg></a>
+      <a href="https://www.linkedin.com/in/phyowathonewin" target="_blank" rel="noopener" class="icon-btn" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4V8h4v1.5A5.5 5.5 0 0 1 16 8z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const menuBtn = document.getElementById('menuBtn');
+  const navLinks = document.getElementById('navLinks');
+  menuBtn.addEventListener('click', () => navLinks.classList.toggle('open'));
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+
+  // badge tap-to-toggle for touch devices
+  document.querySelectorAll('.badge-item').forEach(item => {
+    item.addEventListener('click', (e) => {
+      const wasActive = item.classList.contains('active');
+      document.querySelectorAll('.badge-item.active').forEach(el => el.classList.remove('active'));
+      if (!wasActive) item.classList.add('active');
+    });
+  });
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.badge-item')) {
+      document.querySelectorAll('.badge-item.active').forEach(el => el.classList.remove('active'));
+    }
+  });
+
+  // double-click a badge to open its (placeholder) credential verification link
+  document.querySelectorAll('.badge-item').forEach(item => {
+    item.addEventListener('dblclick', () => {
+      const url = item.getAttribute('data-cred');
+      if (url) window.open(url, '_blank', 'noopener');
+    });
+  });
+
+  // bug bounty data: [name, month/year]
+  const bounties = [
+    ["Proton (Security Contributor)","Jul 2025"],["Financial Services Co. (UK)","Jun 2025"],
+    ["Drone Company","Jun 2025"],["Software Company (Malaysia)","Apr 2025"],
+    ["Binance","Oct 2024"],["Tecno Mobile","Sep 2024"],
+    ["Insignia Financial","May 2024"],["Adore Me","May 2024"],
+    ["Huawei","Apr 2024"],["Google VRP","Feb 2024"],
+    ["Bugcrowd Freelance Program","Jan 2024"],["Media Company","Dec 2023"],
+    ["Pricing Operations Platform","Dec 2023"],["Bugcrowd Private Program","Nov 2023"],
+    ["IBM","Nov 2023"],["NASA","Nov 2023"],
+    ["Intl. Organization for Migration","Oct 2023"],["U.S. Dept. of Homeland Security","Sep 2023"],
+    ["U.S. Dept. of Labor","Aug 2023"],["State of California","Jul 2023"],
+    ["New York Post","Jun 2023"],["U.S. Dept. of Education","May 2023"],
+    ["Modyo","May 2023"],["Wazuh","Mar 2023"],
+    ["CoinGecko","Feb 2023"],["Singapore Government","Feb 2023"],
+    ["U.S. National Archives","Jan 2023"],["Dell","Jan 2023"],
+    ["Miele","Jan 2023"],["Broadcom","Dec 2022"],
+    ["JumpStart Security","Dec 2022"],["Drexel University","Dec 2022"],
+    ["Lenskart","Nov 2022"],["SANS","Nov 2022"],
+    ["cPanel","Nov 2022"],["Trend Micro","Nov 2022"],
+    ["(ISC)²","Oct 2022"],["EC-Council","Oct 2022"],
+    ["Cyfe","Jun 2022"],["NTUC Enterprise","May 2022"],
+    ["Electro Rent","Apr 2022"],["Eventbrite","Apr 2022"],
+    ["Tjilpie","Apr 2022"],["IOOF","Feb 2022"],
+    ["Deutsche Bank","Jan 2022"],["Inflectra","—"],
+    ["University of Texas at Austin","—"],["Blackbaud","—"]
+  ];
+  const grid = document.getElementById('bountyGrid');
+  bounties.forEach(([name,date]) => {
+    const chip = document.createElement('div');
+    chip.className = 'bounty-chip pop';
+    chip.innerHTML = `<span class="dot"></span>${name}<span class="date">${date}</span>`;
+    grid.appendChild(chip);
+  });
+
+  // collapse long experience description lists behind "Show more"
+  // only collapses once content actually runs past ~10 lines of text
+  document.querySelectorAll('.exp-item ul').forEach(ul => {
+    const fullHeight = ul.scrollHeight;
+    const LINE_LIMIT = 260; // roughly 10 lines at this font size/line-height
+    if (fullHeight <= LINE_LIMIT + 24) return; // short enough, show fully, no button
+    ul.style.maxHeight = LINE_LIMIT + 'px';
+    ul.classList.add('collapsed');
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'show-more-btn';
+    btn.textContent = 'Show more ↓';
+    btn.addEventListener('click', () => {
+      const collapsedNow = ul.classList.contains('collapsed');
+      if (collapsedNow) {
+        ul.style.maxHeight = fullHeight + 'px';
+        ul.classList.remove('collapsed');
+        btn.textContent = 'Show less ↑';
+      } else {
+        ul.style.maxHeight = LINE_LIMIT + 'px';
+        ul.classList.add('collapsed');
+        btn.textContent = 'Show more ↓';
+      }
+    });
+    ul.insertAdjacentElement('afterend', btn);
+  });
+
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  } else {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+  }
+
+  // ---------- Resume PDF viewer (PDF.js, rendered to <canvas>) ----------
+  // Same look on every browser since we draw the pages ourselves instead of
+  // relying on each browser's built-in PDF plugin UI.
+  const PDFJS_VERSION = '3.11.174';
+  let rvPdfDoc = null;
+
+  function loadResumePDF() {
+    const body = document.getElementById('resumeBody');
+    body.innerHTML = '<div class="resume-loading">Loading resume viewer…</div>';
+    if (window.pdfjsLib) { rvFetchAndRender(); return; }
+    const s = document.createElement('script');
+    s.src = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS_VERSION}/pdf.min.js`;
+    s.onload = () => {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS_VERSION}/pdf.worker.min.js`;
+      rvFetchAndRender();
+    };
+    s.onerror = () => {
+      body.innerHTML = '<div class="resume-loading">Couldn\'t load the PDF viewer right now.<br><a href="resume.pdf" target="_blank" rel="noopener">Open resume.pdf directly →</a></div>';
+    };
+    document.body.appendChild(s);
+  }
+
+  function rvFetchAndRender() {
+    const body = document.getElementById('resumeBody');
+    pdfjsLib.getDocument('resume.pdf').promise.then(pdf => {
+      rvPdfDoc = pdf;
+      body.innerHTML = `
+        <div class="resume-viewer">
+          <div class="resume-toolbar">
+            <span id="rvPageInfo">${pdf.numPages} page${pdf.numPages > 1 ? 's' : ''}</span>
+          </div>
+          <div class="resume-canvas-wrap" id="rvCanvasWrap"></div>
+        </div>`;
+      rvRenderAllPages();
+    }).catch(() => {
+      if (location.protocol === 'file:') {
+        body.innerHTML = '<div class="resume-loading">Preview needs a local server — browsers block in-page PDF loading when opened directly as a file.<br>Download still works fine. To preview, run <code>python3 -m http.server</code> in this folder and open it via localhost, or view it once the site is hosted online.<br><a href="resume.pdf" target="_blank" rel="noopener">Open resume.pdf directly →</a></div>';
+      } else {
+        body.innerHTML = '<div class="resume-loading">Couldn\'t find resume.pdf — make sure it sits next to this page, then refresh.<br><a href="resume.pdf" target="_blank" rel="noopener">Try opening it directly →</a></div>';
+      }
+    });
+  }
+
+  const RESUME_TARGET_WIDTH = 900; // fixed display width in CSS px — always this readable size, no zoom needed
+
+  async function rvRenderAllPages() {
+    if (!rvPdfDoc) return;
+    const wrap = document.getElementById('rvCanvasWrap');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    const dpr = window.devicePixelRatio || 1;
+    for (let num = 1; num <= rvPdfDoc.numPages; num++) {
+      const page = await rvPdfDoc.getPage(num);
+      const baseViewport = page.getViewport({ scale: 1 });
+      const fixedScale = RESUME_TARGET_WIDTH / baseViewport.width;
+      const viewport = page.getViewport({ scale: fixedScale });
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.floor(viewport.width * dpr);
+      canvas.height = Math.floor(viewport.height * dpr);
+      canvas.style.width = viewport.width + 'px';
+      canvas.style.height = viewport.height + 'px';
+      wrap.appendChild(canvas);
+      const ctx = canvas.getContext('2d');
+      const transform = dpr !== 1 ? [dpr, 0, 0, dpr, 0, 0] : null;
+      await page.render({ canvasContext: ctx, viewport, transform }).promise;
+    }
+  }
+</script>
+
+<script>
+  // ---------- Matrix rain (hero background only) ----------
+  (function () {
+    const canvas = document.getElementById('matrixRain');
+    const hero = document.querySelector('.hero');
+    if (!canvas || !hero) return;
+    const ctx = canvas.getContext('2d');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const glyphs = 'アイウエオカキクケコサシスセソタチツテトナニヌネノ01アイウエオ';
+    let cols = [];
+    let fontSize = 15;
+    let dpr = Math.min(window.devicePixelRatio || 1, 2);
+    let w = 0, h = 0;
+
+    function sizeCanvas() {
+      w = hero.clientWidth;
+      h = hero.clientHeight;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      canvas.style.width = w + 'px';
+      canvas.style.height = h + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      fontSize = w < 560 ? 13 : 15;
+      const numCols = Math.ceil(w / fontSize);
+      cols = new Array(numCols).fill(0).map(() => Math.floor(Math.random() * -40));
+    }
+
+    function draw() {
+      ctx.fillStyle = 'rgba(3,21,10,0.16)';
+      ctx.fillRect(0, 0, w, h);
+      ctx.font = fontSize + 'px monospace';
+      for (let i = 0; i < cols.length; i++) {
+        const x = i * fontSize;
+        const y = cols[i] * fontSize;
+        const isLead = Math.random() > 0.94;
+        ctx.fillStyle = isLead ? '#D6FFE4' : 'rgba(0,255,120,0.75)';
+        const ch = glyphs[Math.floor(Math.random() * glyphs.length)];
+        ctx.fillText(ch, x, y);
+        if (y > h && Math.random() > 0.975) cols[i] = 0;
+        cols[i]++;
+      }
+    }
+
+    if (reduceMotion) {
+      // Static faint frame only, no animation loop, for accessibility/battery
+      sizeCanvas();
+      ctx.fillStyle = '#03150a';
+      ctx.fillRect(0, 0, w, h);
+      return;
+    }
+
+    let raf, lastT = 0;
+    const frameInterval = 55; // ms — keeps mobile smooth
+    function loop(t) {
+      raf = requestAnimationFrame(loop);
+      if (t - lastT < frameInterval) return;
+      lastT = t;
+      draw();
+    }
+
+    sizeCanvas();
+    ctx.fillStyle = '#03150a';
+    ctx.fillRect(0, 0, w, h);
+    raf = requestAnimationFrame(loop);
+
+    let resizeT;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeT);
+      resizeT = setTimeout(() => {
+        sizeCanvas();
+      }, 150);
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) cancelAnimationFrame(raf);
+      else raf = requestAnimationFrame(loop);
+    });
+  })();
+</script>
+
+</body>
+</html>
